@@ -3,6 +3,8 @@ export default async function getReviews(companyId: string) {
   const res = await fetch(`${backendUrl}/api/v1/reviews/${companyId}`, {
     cache: "no-store"
   });
-  if (!res.ok) return { success: false, data: [] };
+  if (!res.ok) {
+    throw new Error("Failed to fetch reviews");
+  }
   return await res.json();
 }
