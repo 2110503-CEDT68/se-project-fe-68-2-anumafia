@@ -110,7 +110,7 @@ export default function ReviewList({ reviews: initialReviews, companyId }: Revie
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <span className="font-semibold text-gray-800">
-                    {isOwner ? "Your Username" : review.user?.name || "Anonymous"}
+                    {review.user?.name || "Anonymous"}
                   </span>
                   <span className="text-gray-400 text-sm">{date}</span>
                 </div>
