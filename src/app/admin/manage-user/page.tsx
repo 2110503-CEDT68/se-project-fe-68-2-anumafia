@@ -20,7 +20,7 @@ export default function ManageUserPage() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
+    <main className="min-h-screen bg-gray-50 p-8 pt-24">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex items-center gap-3">
