@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import getReviews from "@/libs/getReviews";
+import getManageReviews from "@/libs/getManageReviews";
 import AdminReviewList from "@/components/AdminReviewList";
 
 export default async function MyBookingPage() {
@@ -17,7 +17,7 @@ export default async function MyBookingPage() {
     );
   }
 
-  const ReviewsData = await getReviews(session.user.token);
+  const ReviewsData = await getManageReviews(session.user.token);
 
   return (
     <main className="min-h-screen bg-gray-50 pt-24 pb-16 px-4 md:px-12">
