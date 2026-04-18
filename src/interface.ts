@@ -5,7 +5,18 @@ export interface UserItem {
   tel: string;
   role: string;
   createdAt: string;
-  token?: string; 
+  token?: string;
+  yellowCards: {
+	count: number;
+	records: {
+		reason: string;
+		issuedAt: string;
+	}
+  };
+  ban: {
+		isBanned: boolean;
+		reason: string;
+	};
 }
 
 export interface CompanyItem {
@@ -37,4 +48,10 @@ export interface InterviewJson {
   success: boolean;
   count: number;
   data: InterviewItem[];
+}
+
+export interface UserJson {
+  success: boolean;
+  count: number;
+  data: UserItem[];
 }
