@@ -1,57 +1,171 @@
-"use client"
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { CompanyItem } from "@/interface";
 
-export default function CompanyForm({ company }: { company?: CompanyItem }) {
-  const { data: session } = useSession();
+interface CompanyFormProps {
+  initialData?: {
+    _id?: string;
+    name: string;
+    address: string;
+    website: string;
+    tel: string;
+    description: string;
+  };
+  companyId?: string;
+}
+
+export default function CompanyForm({ initialData, companyId }: CompanyFormProps) {
   const router = useRouter();
-  const isEdit = !!company; 
+  const { data: session } = useSession();
+  const isEditing = !!companyId;
 
   const [formData, setFormData] = useState({
-    name: company?.name || "",
-    address: company?.address || "",
-    website: company?.website || "",
-    description: company?.description || "",
-    tel: company?.tel || ""
+    name: initialData?.name || "",
+    address: initialData?.address || "",
+    website: initialData?.website || "",
+    tel: initialData?.tel || "",
+    description: initialData?.description || "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!session?.user?.token) return;
-
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    const url = isEdit ? `${backendUrl}/api/v1/companies/${company._id || company.id}` : `${backendUrl}/api/v1/companies`;
-    const method = isEdit ? "PUT" : "POST";
+    setIsLoading(true);
 
     try {
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.user.token}` },
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const url = isEditing 
+        ? `${backendUrl}/api/v1/companies/${companyId}` 
+        : `${backendUrl}/api/v1/companies`;
+      const method = isEditing ? "PUT" : "POST";
+
+      const token = (session?.user as any)?.token; 
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(formData)
       });
-      if (!res.ok) throw new Error("Action failed");
+
+      if (!response.ok) {
+        throw new Error("Failed to save company data");
+      }
+
+      router.refresh(); 
+      router.push("/admin/companies");
       
-      alert(`Company ${isEdit ? 'Updated' : 'Created'} Successfully!`);
-      router.push("/companies");
-      router.refresh();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (error) {
+      console.error("Submit Error:", error);
+      alert("Failed to update company. Please check console.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-xl space-y-4 border-t-4 border-red-600">
-      <input type="text" placeholder="Company Name" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full border-b-2 py-2 focus:border-red-600 outline-none" />
-      <input type="text" placeholder="Address" required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="w-full border-b-2 py-2 focus:border-red-600 outline-none" />
-      <input type="text" placeholder="Website URL" required value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} className="w-full border-b-2 py-2 focus:border-red-600 outline-none" />
-      <input type="tel" placeholder="Telephone" required value={formData.tel} onChange={(e) => setFormData({...formData, tel: e.target.value})} className="w-full border-b-2 py-2 focus:border-red-600 outline-none" />
-      <textarea placeholder="Description" required rows={3} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full border-b-2 py-2 focus:border-red-600 outline-none" />
+    <div className="bg-[#111827] border border-slate-800 rounded-3xl p-8 md:p-12 shadow-[0_0_40px_rgba(0,0,0,0.5)] relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
       
-      <button type="submit" className="w-full bg-red-600 text-white font-bold py-3 rounded-md hover:bg-red-700 transition shadow">
-        {isEdit ? "Update Company" : "Create New Company"}
-      </button>
-    </form>
+      <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Company Name <span className="text-cyan-500">*</span></label>
+            <input 
+              type="text" 
+              name="name"
+              required
+              value={formData.name} 
+              onChange={handleChange}
+              placeholder="e.g. MacGyver and Sons"
+              className="w-full bg-[#0a0f1a] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-slate-600"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Telephone</label>
+            <input 
+              type="text" 
+              name="tel"
+              value={formData.tel} 
+              onChange={handleChange}
+              placeholder="e.g. 639-378-3474"
+              className="w-full bg-[#0a0f1a] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-slate-600 font-mono"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Website URL</label>
+            <input 
+              type="url" 
+              name="website"
+              value={formData.website} 
+              onChange={handleChange}
+              placeholder="e.g. https://norberto.net"
+              className="w-full bg-[#0a0f1a] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-slate-600"
+            />
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Registered Address</label>
+            <input 
+              type="text" 
+              name="address"
+              value={formData.address} 
+              onChange={handleChange}
+              placeholder="e.g. 2054 Tierra Ways"
+              className="w-full bg-[#0a0f1a] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-slate-600"
+            />
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Company Description</label>
+            <textarea 
+              name="description"
+              rows={4}
+              value={formData.description} 
+              onChange={handleChange}
+              placeholder="Provide a brief overview of the company..."
+              className="w-full bg-[#0a0f1a] border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder-slate-600 resize-none custom-scrollbar"
+            ></textarea>
+          </div>
+        </div>
+
+        <div className="pt-6 mt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-end gap-4">
+          <button 
+            type="button"
+            onClick={() => router.back()}
+            className="px-6 py-3 bg-transparent border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white font-bold rounded-xl transition-all"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            disabled={isLoading}
+            className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg hover:shadow-cyan-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <span className="animate-pulse">Processing...</span>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
+                {isEditing ? "Save Configuration" : "Register Entity"}
+              </>
+            )}
+          </button>
+        </div>
+
+      </form>
+    </div>
   );
 }

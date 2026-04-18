@@ -3,12 +3,14 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import getCompany from "@/libs/getCompany"; 
 import Link from "next/link";
 
-export default async function AdminCompanyDetailPage({ params }: { params: { cid: string } }) {
+export default async function AdminCompanyDetailPage({ params }: { params: Promise<{ cid: string }> }) {
   const session = await getServerSession(authOptions);
   
+  const { cid } = await params;
+
   let company;
   try {
-    const res = await getCompany(params.cid);
+    const res = await getCompany(cid);
     company = res.data || res;
   } catch (error) {
     console.error("Error fetching company details:", error);
@@ -16,7 +18,7 @@ export default async function AdminCompanyDetailPage({ params }: { params: { cid
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-[#0a0f1a] pt-28 px-8 flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-[#0a0f1a] pt-28 px-8 flex flex-col items-center justify-center text-white font-sans">
         <h1 className="text-3xl font-bold text-red-500">404 - Company Not Found</h1>
         <Link href="/admin/companies" className="mt-4 text-cyan-400 hover:underline">Back to Registry</Link>
       </div>
@@ -66,7 +68,6 @@ export default async function AdminCompanyDetailPage({ params }: { params: { cid
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#0a0f1a] p-6 rounded-2xl border border-slate-800/50">
-                
                 <div className="md:col-span-2">
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Registered Address</p>
                   <p className="text-slate-300 font-medium">{company.address || "No address on file"}</p>
@@ -87,7 +88,6 @@ export default async function AdminCompanyDetailPage({ params }: { params: { cid
                     <p className="text-slate-500 italic">No website provided</p>
                   )}
                 </div>
-
               </div>
 
               <div className="pt-4 flex gap-4">
@@ -98,7 +98,6 @@ export default async function AdminCompanyDetailPage({ params }: { params: { cid
               </div>
               
             </div>
-
           </div>
         </div>
       </div>

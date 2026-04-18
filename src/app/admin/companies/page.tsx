@@ -4,6 +4,8 @@ import getCompanies from "@/libs/getCompanies";
 import Link from "next/link";
 import AdminCompanyControls from "@/components/AdminCompanyControls"; 
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminCompaniesPage() {
   const session = await getServerSession(authOptions);
   
