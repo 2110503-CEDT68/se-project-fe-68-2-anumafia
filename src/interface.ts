@@ -38,3 +38,30 @@ export interface InterviewJson {
   count: number;
   data: InterviewItem[];
 }
+
+export interface UserItemForReview {
+  _id: string;
+  name: string;
+}
+
+export interface CompanyItemForReview {
+  _id: string;
+  name: string;
+}
+
+export interface ReviewItem {
+  _id: string;
+  user: UserItemForReview | string;
+  company: CompanyItemForReview | string; 
+  rating: Number;
+  reviewText: string;
+  createdAt: string;
+}
+
+export interface ReviewJson {
+  success: boolean;
+  count: number;
+  data: ReviewItem[];
+}
+
+
