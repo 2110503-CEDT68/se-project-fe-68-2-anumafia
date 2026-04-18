@@ -11,14 +11,6 @@ export default function ProfileSettingsPage() {
 
   const [profileData, setProfileData] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
-
-  // Deactivate states
-  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-  const [isDeactivating, setIsDeactivating] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     if (session?.user?.token) {
@@ -64,12 +56,12 @@ export default function ProfileSettingsPage() {
         
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 w-full max-w-5xl justify-center items-stretch h-auto">
 
-				<ProfileCard
-					profileData={profileData}
-					isLoading={isLoadingProfile}
-					fallbackEmail={session.user?.email}
-					onProfileUpdate={fetchProfile}
-				/>
+		<ProfileCard
+			profileData={profileData}
+			isLoading={isLoadingProfile}
+			fallbackEmail={session.user?.email}
+			onProfileUpdate={fetchProfile}
+		/>
 
         <ChangePasswordForm />
 
