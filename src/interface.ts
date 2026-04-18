@@ -64,7 +64,7 @@ export interface ReviewItem {
   _id: string;
   user: UserItemForReview;
   company: CompanyItemForReview; 
-  rating: Number;
+  rating: number;
   reviewText: string;
   createdAt: string;
 }
