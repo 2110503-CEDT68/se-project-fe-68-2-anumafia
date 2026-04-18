@@ -29,6 +29,13 @@ export default function TopMenu() {
           <TopMenuItem title="Companies" pageRef="/companies"  />
           {session ? (
             <>
+              {/* แสดงเฉพาะ Admin */}
+              {session.user?.role === "admin" && (
+                <Link href="/admin/manage-user" className="font-semibold text-purple-700 hover:text-purple-600 transition-colors flex items-center gap-2">
+                  Manage Users
+                </Link>
+              )}
+              
               <Link href="/profile" className="font-semibold text-gray-700 hover:text-cyan-600 transition-colors flex items-center gap-2">
                 👤 {session.user?.name || "Profile"}
               </Link>
@@ -79,6 +86,12 @@ export default function TopMenu() {
 
           {session ? (
             <div className="flex flex-col space-y-5">
+              {session.user?.role === "admin" && (
+                <Link href="/admin/manage-user" onClick={closeMenu} className="font-semibold text-lg text-purple-700 hover:text-purple-600 transition-colors">
+                  Manage Users
+                </Link>
+              )}
+
               <Link href="/profile" onClick={closeMenu} className="font-semibold text-lg text-cyan-700 hover:text-cyan-800 transition-colors">
                 👤 {session.user?.name || "Profile Settings"}
               </Link>
