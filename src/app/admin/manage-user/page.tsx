@@ -1,15 +1,39 @@
 'use client'
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { UserItem } from '@/interface'; 
+import getUsers from '@/libs/getUsers'; 
 
 export default function ManageUserPage() {
-  const [users, setUsers] = useState<any[]>([
-    { _id: "69e362f6bc66602f585511fc", name: "hello", email: "hello@gmail.com", tel: "0812345678", role: "user" },
-    { _id: "69e24a8464f6bc21a30848fd", name: "Alexys_Flatley", email: "alexys@example.com", tel: "0898765432", role: "user" },
-  ]);
+  const { data: session } = useSession();
   
+  const [users, setUsers] = useState<UserItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (session?.user?.token) {
+        try {
+          const res = await getUsers(session.user.token);
+          
+          if (res.data) {
+             setUsers(res.data); 
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else if (session === null) {
+         setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [session]);
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -22,6 +46,7 @@ export default function ManageUserPage() {
   return (
     <main className="min-h-screen bg-gray-50 p-8 pt-24">
       <div className="max-w-5xl mx-auto">
+        
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-gray-800 border-l-4 border-blue-500 pl-3">
@@ -40,7 +65,7 @@ export default function ManageUserPage() {
             </div>
             <input 
               type="text" 
-              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 shadow-sm" 
+              className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 shadow-sm transition-all" 
               placeholder="Search by User Name..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -48,55 +73,66 @@ export default function ManageUserPage() {
           </div>
         </div>
 
-        <div className="space-y-3">
-          {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
-              <div key={user._id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all duration-200">
-                <button 
-                  onClick={() => toggleExpand(user._id)}
-                  className="w-full flex justify-between items-center p-4 hover:bg-gray-50 focus:outline-none transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="text-lg font-bold text-gray-800">{user.name}</span>
-                    <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md border border-gray-200">
-                      ID: {user._id}
-                    </span>
-                  </div>
-                  <svg 
-                    className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${expandedId === user._id ? 'rotate-180' : ''}`} 
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-4"></div>
+            <p className="text-gray-500 font-medium">Loading user list...</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
+                <div key={user._id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden transition-all duration-200">
+                  
+                  <button 
+                    onClick={() => toggleExpand(user._id)}
+                    className="w-full flex justify-between items-center p-4 hover:bg-gray-50 focus:outline-none transition-colors"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </button>
+                    <div className="flex items-center gap-4">
+                      <span className="text-lg font-bold text-gray-800">{user.name}</span>
+                      <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-md border border-gray-200">
+                        ID: {user._id}
+                      </span>
+                    </div>
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${expandedId === user._id ? 'rotate-180' : ''}`} 
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </button>
 
-                {expandedId === user._id && (
-                  <div className="px-4 py-5 border-t border-gray-100 bg-gray-50">
-                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">User Profile Details</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-500">Email</p>
-                        <p className="font-medium text-gray-900">{user.email}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Telephone</p>
-                        <p className="font-medium text-gray-900">{user.tel || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Role</p>
-                        <p className="font-medium text-gray-900 capitalize">{user.role}</p>
+                  {expandedId === user._id && (
+                    <div className="px-4 py-5 border-t border-gray-100 bg-gray-50 animate-fade-in-down">
+                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">User Profile Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-500 mb-1">Email</p>
+                          <p className="font-medium text-gray-900">{user.email}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 mb-1">Telephone</p>
+                          <p className="font-medium text-gray-900">{user.tel || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500 mb-1">Role</p>
+                          <p className="font-medium text-gray-900 capitalize">{user.role}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-16 bg-white border border-gray-200 rounded-lg">
+                <svg className="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <p className="text-gray-500 text-lg">No users found.</p>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-10 bg-white border border-gray-200 rounded-lg">
-              <p className="text-gray-500">No users found.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </main>
   );
