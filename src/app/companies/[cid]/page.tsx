@@ -62,7 +62,6 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
             </div>
 
             <div className="mt-auto pt-6">
-              <AdminCompanyControls companyId={company._id || company.id} />
             </div>
           </div>
 
