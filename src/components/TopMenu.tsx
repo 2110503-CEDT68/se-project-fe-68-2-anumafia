@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react"; 
 import { useState } from "react";
+import TopMenuItem from "./TopMenuItem";
 
 export default function TopMenu() {
   const { data: session } = useSession();
-  
+  const isAdmin = session?.user?.role === "admin";
+  const bookingText = isAdmin ? "Manage Booking" : "Booked Interviews";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -22,23 +24,12 @@ export default function TopMenu() {
           </Link>
         </div>
         <div className="hidden md:flex flex-row items-center space-x-6 md:space-x-8">
-          <Link href="/mybooking" className="font-semibold text-gray-700 hover:text-cyan-600 transition-colors flex items-center gap-2">
-            Booking Interviews
-          </Link>
-
-          <Link href="/companies" className="font-semibold text-gray-700 hover:text-cyan-600 transition-colors">
-            Companies
-          </Link>
-
+          {isAdmin?(<TopMenuItem title="Manage Review" pageRef="/manage/reviews"  />):(<></>)}
+          <TopMenuItem title={bookingText} pageRef="/mybooking"  />
+          {isAdmin?(<TopMenuItem title="Manage Users" pageRef="/admin/manage-user"  />):(<></>)}
+          <TopMenuItem title="Companies" pageRef="/companies"  />
           {session ? (
             <>
-              {/* แสดงเฉพาะ Admin */}
-              {session.user?.role === "admin" && (
-                <Link href="/admin/manage-user" className="font-semibold text-purple-700 hover:text-purple-600 transition-colors flex items-center gap-2">
-                  Manage Users
-                </Link>
-              )}
-              
               <Link href="/profile" className="font-semibold text-gray-700 hover:text-cyan-600 transition-colors flex items-center gap-2">
                 👤 {session.user?.name || "Profile"}
               </Link>
