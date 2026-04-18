@@ -27,8 +27,8 @@ export interface CompanyJson {
 
 export interface InterviewItem {
   _id: string;
-  company: CompanyItem | string; 
-  user: UserItem | string;
+  company: CompanyItem; 
+  user: UserItem;
   sessionDate: string; 
   createdAt: string;
 }
@@ -51,8 +51,8 @@ export interface CompanyItemForReview {
 
 export interface ReviewItem {
   _id: string;
-  user: UserItemForReview | string;
-  company: CompanyItemForReview | string; 
+  user: UserItemForReview;
+  company: CompanyItemForReview; 
   rating: Number;
   reviewText: string;
   createdAt: string;
