@@ -4,7 +4,7 @@
 
 A modern web platform for managing job fair registrations, company interactions, and interview bookings. Built with Next.js 15, React 19, and TypeScript.
 
-**Live URL:** [https://se-project-be-68-2-anumafia.vercel.app](https://se-project-be-68-2-anumafia.vercel.app)
+**Live URL:** [https://se-project-fe-68-2-anumafia.vercel.app](https://se-project-fe-68-2-anumafia.vercel.app)
 
 ## Overview
 
