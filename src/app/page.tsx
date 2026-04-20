@@ -17,62 +17,69 @@ export default function Home() {
 
   if (isAdmin) {
     return (
-      <main className="min-h-screen bg-slate-900 flex flex-col pt-24 pb-12">
-        <div className="flex-grow flex flex-col items-center px-4 md:px-8">
+      <main className="min-h-screen bg-gray-50 flex flex-col pt-16 relative overflow-hidden">
+        
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+           <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-cyan-200/40 blur-3xl"></div>
+           <div className="absolute top-[40%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-200/40 blur-3xl"></div>
+        </div>
+
+        <div className="flex-grow flex flex-col items-center px-4 md:px-8 py-16 z-10">
           <div className="max-w-6xl w-full">
             
-            <div className="text-center mb-12 animate-fade-in-down">
-              <span className="inline-block py-1 px-4 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 text-xs font-bold mb-4 tracking-widest shadow-sm uppercase">
+            <div className="text-center mb-16 animate-fade-in-down">
+              <span className="inline-block py-1.5 px-4 rounded-full bg-slate-800 text-white text-xs font-bold mb-6 tracking-widest shadow-md uppercase">
                 Admin Command Center
               </span>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
                 System Overview
               </h1>
-              <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-                Monitor platform integrity, manage users, and oversee all JobFair 2026 operations.
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                Monitor platform integrity, manage users, and oversee all JobFair 2026 operations from your central dashboard.
               </p>
+              <div className="w-24 h-1.5 bg-gradient-to-r from-slate-700 to-slate-900 mx-auto rounded-full mt-8"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               
-              <Link href="/admin/manage-user" className="group bg-slate-800 border border-slate-700 p-8 rounded-3xl hover:bg-slate-750 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-900/20 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Link href="/admin/manage-user" className="bg-white border border-gray-100 p-8 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group z-10 relative overflow-hidden">
+                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Manage Users</h2>
-                <p className="text-slate-400 leading-relaxed">Control user accounts, issue warnings, and ban malicious users from the platform.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Manage Users</h2>
+                <p className="text-gray-600 leading-relaxed">Control user accounts, issue warnings, and ban malicious users from the platform.</p>
               </Link>
 
-              <Link href="/manage/reviews" className="group bg-slate-800 border border-slate-700 p-8 rounded-3xl hover:bg-slate-750 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-900/20 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Link href="/manage/reviews" className="bg-white border border-gray-100 p-8 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group z-10 relative overflow-hidden">
+                <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Manage Reviews</h2>
-                <p className="text-slate-400 leading-relaxed">Moderate user feedback. Approve constructive reviews or remove inappropriate content.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Manage Reviews</h2>
+                <p className="text-gray-600 leading-relaxed">Moderate user feedback. Approve constructive reviews or remove inappropriate content.</p>
               </Link>
 
-              <Link href="/mybooking" className="group bg-slate-800 border border-slate-700 p-8 rounded-3xl hover:bg-slate-750 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-900/20 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-purple-500/10 text-purple-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Link href="/mybooking" className="bg-white border border-gray-100 p-8 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group z-10 relative overflow-hidden">
+                <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Manage Bookings</h2>
-                <p className="text-slate-400 leading-relaxed">Oversee all interview sessions. Track schedules and ensure a smooth booking process.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Manage Bookings</h2>
+                <p className="text-gray-600 leading-relaxed">Oversee all interview sessions. Track schedules and ensure a smooth booking process.</p>
               </Link>
 
-              <Link href="/companies" className="group bg-slate-800 border border-slate-700 p-8 rounded-3xl hover:bg-slate-750 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-900/20 hover:-translate-y-1">
-                <div className="w-16 h-16 bg-cyan-500/10 text-cyan-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <Link href="/companies" className="bg-white border border-gray-100 p-8 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group z-10 relative overflow-hidden">
+                <div className="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Explore Companies</h2>
-                <p className="text-slate-400 leading-relaxed">View the company catalog exactly as users see it to ensure information accuracy.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Explore Companies</h2>
+                <p className="text-gray-600 leading-relaxed">View the company catalog exactly as users see it to ensure information accuracy.</p>
               </Link>
 
             </div>
           </div>
         </div>
 
-        <footer className="text-slate-600 py-8 text-center mt-auto">
-          <p className="font-medium text-sm">© 2026 JobFair Admin Portal. Engineered with 💻 and ☕.</p>
+        <footer className="bg-gray-900 text-gray-400 py-8 text-center z-10 mt-auto">
+          <p className="font-medium">© 2026 JobFair Registration Platform. Engineered with 💻 and ☕.</p>
         </footer>
       </main>
     );
