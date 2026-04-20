@@ -28,16 +28,19 @@ export default function Home() {
           <div className="max-w-6xl w-full">
             
             <div className="text-center mb-16 animate-fade-in-down">
-              <span className="inline-block py-1.5 px-4 rounded-full bg-slate-800 text-white text-xs font-bold mb-6 tracking-widest shadow-md uppercase">
+              <span className="inline-block py-1.5 px-4 rounded-full bg-slate-800 text-white text-xs font-bold mb-6 tracking-widest shadow-md uppercase hover:bg-slate-700 transition-colors cursor-default">
                 Admin Command Center
               </span>
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-                System Overview
+              
+              <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight drop-shadow-sm">
+                System <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">Overview</span>
               </h1>
+              
               <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
                 Monitor platform integrity, manage users, and oversee all JobFair 2026 operations from your central dashboard.
               </p>
-              <div className="w-24 h-1.5 bg-gradient-to-r from-slate-700 to-slate-900 mx-auto rounded-full mt-8"></div>
+              
+              <div className="w-24 h-1.5 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto rounded-full mt-8 opacity-80"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
