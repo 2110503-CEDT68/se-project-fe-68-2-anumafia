@@ -21,7 +21,7 @@ export default function ManageUserPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchInput);
-    }, 300); 
+    }, 300);
     return () => clearTimeout(timer);
   }, [searchInput]);
 
@@ -47,7 +47,7 @@ export default function ManageUserPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user?.token, filterRole, sortOption]);
+  }, [session?.user?.token, filterRole, sortOption]); 
 
   useEffect(() => {
     if (session !== null) {
@@ -95,7 +95,7 @@ export default function ManageUserPage() {
               <input 
                 type="text" 
                 className="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 outline-none transition-all" 
-                placeholder="Search by User Name or Email (FE Filter)..." 
+                placeholder="Search by User Name or Email..." 
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
@@ -178,6 +178,7 @@ export default function ManageUserPage() {
                     {expandedId === user._id && (
                       <div className="px-5 py-6 border-t border-gray-100 bg-gray-50/50 animate-fade-in-down">
                         <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-5">User Profile Details</h3>
+                        
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm mb-6">
                           <div>
                             <p className="text-gray-500 mb-1.5 font-medium">Email</p>
@@ -195,27 +196,49 @@ export default function ManageUserPage() {
                           </div>
                         </div>
 
+                        {isEffectivelyBanned && (
+                          <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h4 className="text-sm font-bold text-red-800 mb-2 flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                              Ban Reason
+                            </h4>
+                            <p className="text-sm text-red-700 font-medium ml-6 leading-relaxed">
+                              {user.ban?.reason 
+                                ? user.ban.reason 
+                                : (yellowCount >= 3 
+                                    ? "Accumulation of 3 yellow cards (Auto-banned by system)" 
+                                    : "No specific reason provided by admin.")}
+                            </p>
+                          </div>
+                        )}
+
                         {yellowCount > 0 && user.yellowCards?.records && (
                           <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
                             <h4 className="text-sm font-bold text-amber-800 mb-2 flex items-center gap-2">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                              Yellow Card Reasons
+                              Yellow Card History ({yellowCount}/3)
                             </h4>
                             <ul className="list-disc list-inside text-sm text-amber-700 space-y-1 ml-1">
-                              {user.yellowCards?.records?.map((record: any, idx: number) => (
+                              {(user.yellowCards?.records as any[])?.map((record: any, idx: number) => (
                                 <li key={idx} className="leading-relaxed">
                                   <span className="font-medium">{record.reason || "No reason provided"}</span>
-                                  {record.issuedAt && <span className="text-amber-500 text-xs ml-2">({new Date(record.issuedAt).toLocaleDateString()})</span>}
+                                  {(record.issuedAt || record.createdAt) && (
+                                    <span className="text-amber-500 text-xs ml-2">
+                                      ({new Date(record.issuedAt || record.createdAt).toLocaleDateString()})
+                                    </span>
+                                  )}
                                 </li>
                               ))}
                             </ul>
                           </div>
                         )}
                         
-                        <hr className="border-gray-200 mb-5" />
+                        <hr className="border-gray-200 mt-2 mb-5" />
+                        
                         <div className="flex justify-end">
                           <UserControls user={user} token={session?.user?.token || ''} onRefresh={fetchUsers} />
                         </div>
+
                       </div>
                     )}
                   </div>
