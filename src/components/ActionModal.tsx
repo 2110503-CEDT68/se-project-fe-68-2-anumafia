@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function ActionModal({ isOpen, onConfirm, onCancel, title }: Props) {
-  const [reason, setReason] = useState("");
+  const ref = useRef<HTMLTextAreaElement>(null);
 
   if (!isOpen) return null;
 
@@ -23,13 +23,12 @@ export default function ActionModal({ isOpen, onConfirm, onCancel, title }: Prop
         <textarea
           placeholder="Enter reason..."
           className="w-full border p-2 mb-4"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
+          ref={ref}
         />
 
         <div className="flex gap-2">
           <button
-            onClick={() => onConfirm(reason)}
+            onClick={() => onConfirm(ref.current?.value || "")}
             className="bg-red-500 text-white px-4 py-2 rounded"
           >
             OK

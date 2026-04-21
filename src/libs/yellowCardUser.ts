@@ -10,5 +10,9 @@ export default async function yellowCardUser(userId: string, token: string, reas
     body: JSON.stringify({ reason })
   });
 
+  if(!res.ok) {
+    throw new Error(`Failed to yellow card user: ${res.statusText}`);
+  }
+
   return await res.json();
 }

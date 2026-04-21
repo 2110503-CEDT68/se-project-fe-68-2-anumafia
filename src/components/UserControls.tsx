@@ -21,6 +21,10 @@ export default function UserControls({
   const [open, setOpen] = useState<null | "yellow" | "ban">(null);
 
   const handleYellow = async (reason: string) => {
+    if(reason.trim() === "") {
+      alert("Reason cannot be empty");
+      return;
+    }
     await yellowCardUser(userId, token, reason);
     alert("Yellow card given");
     setOpen(null);
@@ -28,6 +32,10 @@ export default function UserControls({
   };
 
   const handleBan = async (reason: string) => {
+    if(reason.trim() === "") {
+      alert("Reason cannot be empty");
+      return;
+    }
     await banUser(userId, token, reason);
     alert("User banned");
     setOpen(null);
@@ -45,7 +53,7 @@ export default function UserControls({
       {/* 🟡 Yellow */}
       <button
         onClick={() => setOpen("yellow")}
-        disabled={user.ban?.isBanned || user.yellowCards?.count >= 3}
+        hidden={user.ban?.isBanned || user.yellowCards?.count >= 3}
         className="bg-yellow-400 px-3 py-1 rounded disabled:opacity-50"
       >
         Yellow
@@ -54,7 +62,7 @@ export default function UserControls({
       {/* 🔴 Ban */}
       <button
         onClick={() => setOpen("ban")}
-        disabled={user.ban?.isBanned}
+        hidden={user.ban?.isBanned}
         className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50"
       >
         Ban
@@ -63,7 +71,7 @@ export default function UserControls({
       {/* 🟢 Unban */}
       <button
         onClick={handleUnban}
-        disabled={!user.ban?.isBanned}
+        hidden={!user.ban?.isBanned}
         className="bg-green-500 text-white px-3 py-1 rounded disabled:opacity-50"
       >
         Unban
