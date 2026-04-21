@@ -15,16 +15,28 @@ export default async function CompaniesPage() {
     <main className="min-h-screen bg-gray-50 pt-24 pb-16 px-4 md:px-12">
       <div className="max-w-7xl mx-auto">
         
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Explore <span className="text-cyan-600">Companies</span>
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find your dream company and book an interview session today.
-          </p>
+        <div className="text-center mb-10 animate-fade-in-down">
+          {isAdmin ? (
+            <>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                Manage <span className="text-cyan-600">Companies</span>
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Register new company accounts, oversee the directory, and manage company statuses.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                Explore <span className="text-cyan-600">Companies</span>
+              </h1>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Find your dream company and book an interview session today.
+              </p>
+            </>
+          )}
         </div>
 
-        {}
         {isAdmin && (
           <div className="flex justify-center mb-10">
             <Link 
@@ -36,7 +48,6 @@ export default async function CompaniesPage() {
           </div>
         )}
 
-        {}
         <Suspense fallback={
           <div className="flex flex-col items-center justify-center mt-20 space-y-4">
             <div className="w-12 h-12 border-4 border-cyan-200 border-t-cyan-600 rounded-full animate-spin"></div>
