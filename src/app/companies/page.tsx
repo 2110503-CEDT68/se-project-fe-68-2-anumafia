@@ -31,7 +31,7 @@ export default async function CompaniesPage() {
               href="/companies/create" 
               className="bg-red-600 text-white font-extrabold py-3 px-8 rounded-full hover:bg-red-700 transition-all shadow-lg hover:shadow-red-500/30 transform hover:-translate-y-1 flex items-center gap-2"
             >
-              <span className="text-xl"></span>Create New Company
+              <span className="text-lg">Create Company Account</span>
             </Link>
           </div>
         )}
