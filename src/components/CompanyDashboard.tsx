@@ -7,6 +7,7 @@ import getCompanyByUserId from "@/libs/getCompanyByUserId";
 import getInterviews from "@/libs/getInterviews";
 import getReviews from "@/libs/getReviews";
 import { CompanyItem } from "@/interface";
+import CompanyInterviewCard from "@/components/CompanyInterviewCard";
 
 export default function CompanyDashboard() {
   const { data: session } = useSession();
@@ -142,25 +143,7 @@ export default function CompanyDashboard() {
           <div className="space-y-4 animate-fade-in">
             {interviews.length > 0 ? (
               interviews.map((interview: any, idx) => (
-                <div key={interview._id || idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition-shadow">
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-lg flex items-center gap-2">
-                      👤 {interview.user?.name || "Candidate Name"}
-                    </h4>
-                    <p className="text-gray-500 text-sm mt-1 flex items-center gap-2">
-                      📅 Date: <span className="font-semibold text-cyan-700">{new Date(interview.apptDate || interview.createdAt).toLocaleDateString()}</span>
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                     <span className={`text-xs font-bold px-3 py-1.5 rounded-lg capitalize border ${
-                       interview.status === 'confirmed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                       interview.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
-                       'bg-blue-50 text-blue-800 border-blue-200'
-                     }`}>
-                       {interview.status || "Pending"}
-                     </span>
-                  </div>
-                </div>
+                <CompanyInterviewCard key={interview._id || idx} interview={interview} />
               ))
             ) : (
               <div className="text-center py-12 bg-white rounded-2xl border border-gray-100 text-gray-500 flex flex-col items-center justify-center">
