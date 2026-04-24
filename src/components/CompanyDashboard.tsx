@@ -186,11 +186,11 @@ export default function CompanyDashboard() {
                   </div>
                   <div className="flex items-center gap-3">
                      <span className={`text-xs font-bold px-3 py-1.5 rounded-lg capitalize border ${
-                       interview.status === 'confirmed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                       interview.status === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
+                       interview.attendanceStatus === 'attended' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                       interview.attendanceStatus === 'rejected' ? 'bg-red-50 text-red-700 border-red-200' :
                        'bg-blue-50 text-blue-800 border-blue-200'
                      }`}>
-                       {interview.status || "Pending"}
+                       {interview.attendanceStatus || "Pending"}
                      </span>
                   </div>
                 </div>
