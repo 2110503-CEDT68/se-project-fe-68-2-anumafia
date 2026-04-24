@@ -6,18 +6,19 @@ import Link from "next/link";
 import getCompanyByUserId from "@/libs/getCompanyByUserId";
 import getInterviews from "@/libs/getInterviews";
 import getReviews from "@/libs/getReviews";
-import { CompanyItem } from "@/interface";
+import { CompanyItem, InterviewItem } from "@/interface";
 import deleteCompany from "@/libs/deleteCompany";
 import { signOut } from "next-auth/react";
 import togglePublic from "@/libs/togglePublic";
 import { Switch } from "@mui/material";
+import updateAttendance from "@/libs/updateAttendance";
 export default function CompanyDashboard() {
   const { data: session } = useSession();
 
   const [activeTab, setActiveTab] = useState<"interviews" | "reviews">("interviews");
 
   const [company, setCompany] = useState<CompanyItem | null>(null);
-  const [interviews, setInterviews] = useState<any[]>([]);
+  const [interviews, setInterviews] = useState<InterviewItem[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -293,6 +294,26 @@ export default function CompanyDashboard() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
+                    {interview.attendanceStatus === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => {updateAttendance('attended', interview._id, session?.user.token as string).then(() => {
+                            setInterviews(prev => prev.map(item => item._id === interview._id ? { ...item, attendanceStatus: 'attended' } : item));
+                          })}}
+                          className="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                          Attended
+                        </button>
+                        <button
+                          onClick={() => {updateAttendance('absent', interview._id, session?.user.token as string).then(() => {
+                            setInterviews(prev => prev.map(item => item._id === interview._id ? { ...item, attendanceStatus: 'absent' } : item));
+                          })}}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                          Absent
+                        </button> 
+                      </>
+                    )}
                     <span className={`text-xs font-bold px-3 py-1.5 rounded-lg capitalize border ${interview.attendanceStatus === 'attended' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
                       interview.attendanceStatus === 'absent' ? 'bg-red-50 text-red-700 border-red-200' :
                         'bg-blue-50 text-blue-800 border-blue-200'
