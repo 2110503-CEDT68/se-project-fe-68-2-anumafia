@@ -36,7 +36,7 @@ export default function CompanyForm({ company }: { company?: CompanyItem }) {
       if (!res.ok) throw new Error("Action failed");
       
       alert(`Company ${isEdit ? 'Updated' : 'Created'} Successfully!`);
-      router.push("/companies");
+      router.push("/");
       router.refresh();
     } catch (err: any) {
       alert(err.message);

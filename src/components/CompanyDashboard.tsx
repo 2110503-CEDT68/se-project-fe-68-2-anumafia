@@ -6,16 +6,21 @@ import getCompanyByUserId from "@/libs/getCompanyByUserId";
 import getInterviews from "@/libs/getInterviews";
 import getReviews from "@/libs/getReviews";
 import { CompanyItem } from "@/interface";
-
+import deleteCompany from "@/libs/deleteCompany";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
 export default function CompanyDashboard() {
   const { data: session } = useSession();
-  
+
   const [activeTab, setActiveTab] = useState<"interviews" | "reviews">("interviews");
-  
+
   const [company, setCompany] = useState<CompanyItem | null>(null);
   const [interviews, setInterviews] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -24,8 +29,8 @@ export default function CompanyDashboard() {
       try {
         setLoading(true);
         const companyRes = await getCompanyByUserId(session.user._id);
-        
-        const myCompany = companyRes.data[0] || companyRes.data; 
+
+        const myCompany = companyRes.data[0] || companyRes.data;
         setCompany(myCompany);
 
         if (myCompany?._id) {
@@ -63,10 +68,97 @@ export default function CompanyDashboard() {
       </div>
     );
   }
+  const handleDeleteCompany = async () => {
+    if (!session?.user?.token || !company) return;
+    try {
+      setIsDeleting(true);
+      await deleteCompany(company._id || company.id, session.user.token);
+      await signOut({ callbackUrl: "/" });
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteModal(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowDeleteModal(false);
+    setConfirmed(false);
+  };
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-8 animate-fade-in-up">
-      
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={handleCloseModal} />
+          <div className="relative bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4 z-10">
+
+            <div className="flex justify-center mb-4">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 text-center mb-2">
+              Delete Company Profile
+            </h2>
+            <p className="text-center text-gray-500 text-sm mb-6">
+              Are you sure you want to delete this company?
+            </p>
+
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 space-y-2">
+              <p className="text-sm font-bold text-red-700 mb-2">What will happen:</p>
+              {[
+                "Company profile will be permanently deleted",
+                "All interview bookings will be cancelled",
+                "All company reviews will be removed",
+                "Your account will be signed out immediately",
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="text-red-500 mt-0.5 shrink-0">✕</span>
+                  <p className="text-sm text-red-700">{item}</p>
+                </div>
+              ))}
+            </div>
+
+            <label className="flex items-start gap-3 mb-6 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={confirmed}
+                onChange={e => setConfirmed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-red-600 cursor-pointer"
+              />
+              <span className="text-sm text-gray-700">
+                I understand this action is <span className="font-bold text-red-600">irreversible</span> and want to delete this company.
+              </span>
+            </label>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCloseModal}
+                className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteCompany}
+                disabled={!confirmed || isDeleting}
+                className={`flex-1 py-3 rounded-xl font-bold text-white transition-all
+                  ${confirmed && !isDeleting
+                    ? "bg-red-600 hover:bg-red-700 active:scale-[0.98]"
+                    : "bg-red-300 cursor-not-allowed"
+                  }`}
+              >
+                {isDeleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
         <div className="bg-gradient-to-r from-cyan-600 to-blue-600 h-24"></div>
         <div className="px-8 pb-8 pt-4">
@@ -79,13 +171,28 @@ export default function CompanyDashboard() {
               </p>
             </div>
           </div>
-          
+          <div className="flex items-center gap-2 pb-5">
+            <Link
+              href={`/companies/${company._id || company.id}/edit`}
+              className="bg-gray-50 hover:bg-cyan-50 text-gray-600 hover:text-cyan-700 border border-gray-200 hover:border-cyan-200 font-bold py-2 px-4 rounded-xl flex items-center gap-2 transition-all shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+              <span className="hidden sm:inline">Edit Info</span>
+            </Link>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 font-bold py-2 px-4 rounded-xl flex items-center gap-2 transition-all shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              <span className="hidden sm:inline">Delete Profile</span>
+            </button>
+          </div>
           <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Company Details</h3>
             <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
               {company.description || "No description available."}
             </p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200">
               <div>
                 <span className="text-sm text-gray-500 block mb-1">Website</span>
@@ -104,21 +211,19 @@ export default function CompanyDashboard() {
         <div className="flex space-x-2">
           <button
             onClick={() => setActiveTab("interviews")}
-            className={`flex-1 py-3 px-6 rounded-2xl font-bold text-sm transition-all duration-200 ${
-              activeTab === "interviews"
-                ? "bg-blue-50 text-blue-700 shadow-sm"
-                : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-            }`}
+            className={`flex-1 py-3 px-6 rounded-2xl font-bold text-sm transition-all duration-200 ${activeTab === "interviews"
+              ? "bg-blue-50 text-blue-700 shadow-sm"
+              : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              }`}
           >
             Interviews ({interviews.length})
           </button>
           <button
             onClick={() => setActiveTab("reviews")}
-            className={`flex-1 py-3 px-6 rounded-2xl font-bold text-sm transition-all duration-200 ${
-              activeTab === "reviews"
-                ? "bg-amber-50 text-amber-700 shadow-sm"
-                : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-            }`}
+            className={`flex-1 py-3 px-6 rounded-2xl font-bold text-sm transition-all duration-200 ${activeTab === "reviews"
+              ? "bg-amber-50 text-amber-700 shadow-sm"
+              : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              }`}
           >
             Company Reviews ({reviews.length})
           </button>
@@ -126,7 +231,7 @@ export default function CompanyDashboard() {
       </div>
 
       <div className="min-h-[300px]">
-        
+
         {activeTab === "interviews" && (
           <div className="space-y-4 animate-fade-in">
             {interviews.length > 0 ? (
@@ -139,9 +244,9 @@ export default function CompanyDashboard() {
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                     <span className="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1.5 rounded-lg capitalize">
-                       {interview.status || "Pending"}
-                     </span>
+                    <span className="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1.5 rounded-lg capitalize">
+                      {interview.status || "Pending"}
+                    </span>
                   </div>
                 </div>
               ))
