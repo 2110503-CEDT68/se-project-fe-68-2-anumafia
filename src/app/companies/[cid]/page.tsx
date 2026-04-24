@@ -17,7 +17,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
   
   const interviews = role === "user" && session?.user?.token ? (await getInterviews(session.user.token, cid) as any)?.data || [] : [];
   const hasAttended = interviews.some(
-    (interview: any) => interview.attendanceStatus === "attended"
+    (interview: any) => interview.attendanceStatus === "attended" && (interview.company?._id === cid || interview.company?.id === cid)
   );
 
   const hideInterviewForm = role === "admin" || role === "company";
