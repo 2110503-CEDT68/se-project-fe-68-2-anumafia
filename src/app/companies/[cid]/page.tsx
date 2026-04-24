@@ -15,7 +15,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
   const session = await getServerSession(authOptions);
   const role = session?.user?.role;
   
-  const interviews = session?.user?.token ? (await getInterviews(session.user.token, cid) as any)?.data || [] : [];
+  const interviews = role === "user" && session?.user?.token ? (await getInterviews(session.user.token, cid) as any)?.data || [] : [];
   const hasAttended = interviews.some(
     (interview: any) => interview.attendanceStatus === "attended"
   );
