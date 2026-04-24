@@ -8,13 +8,19 @@ import ReviewList from "@/components/ReviewList";
 import { ReviewJson } from "@/interface";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-
+import getInterviews from "@/libs/getInterviews";
 export default async function CompanyDetailPage({ params }: { params: Promise<{ cid: string }> }) {
   const { cid } = await params;
   
   const session = await getServerSession(authOptions);
   const role = session?.user?.role;
-  const hideForms = role === "admin" || role === "company";
+  
+  const interviews = session?.user?.token ? (await getInterviews(session.user.token, cid) as any)?.data || [] : [];
+  const hasAttended = interviews.some(
+    (interview: any) => interview.attendanceStatus === "attended"
+  );
+
+  const hideForms = role === "admin" || role === "company" || !hasAttended ;
   
   const companyDetail = await getCompany(cid);
   const company = companyDetail.data;
