@@ -6,12 +6,12 @@ import BookingList from "@/components/BookingList";
 export default async function MyBookingPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session || !session.user.token) {
+  if (!session || !session.user.token || session.user.role !== "admin") {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center pt-16">
         <div className="bg-white p-8 rounded-2xl shadow-lg text-center max-w-md w-full border-t-4 border-cyan-600">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Access Denied</h2>
-          <p className="text-gray-600 text-lg">Please Sign-In to view your interview bookings.</p>
+          <p className="text-gray-600 text-lg">Please Sign-In as admin to access this page.</p>
         </div>
       </main>
     );
@@ -24,10 +24,10 @@ export default async function MyBookingPage() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            My <span className="text-cyan-600">Bookings</span>
+            Admin <span className="text-red-600">Manages Interviews</span>
           </h1>
           <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
-            "Manage your upcoming interview sessions and track your career journey."
+            "Manage all interview sessions across the system. You have full control." 
           </p>
         </div>
         
