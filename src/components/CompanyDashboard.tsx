@@ -308,7 +308,7 @@ export default function CompanyDashboard() {
                       {interview.attendanceStatus || "pending"}
                     </span>
                     {/* ✅ Attendance buttons */}
-                    { interview.attendanceStatus !== 'pending' &&
+                    { interview.attendanceStatus === 'pending' &&
                     <div className="flex gap-2 shrink-0">
                       <button
                         onClick={() => handleAttendance(interview._id, 'attended')}
