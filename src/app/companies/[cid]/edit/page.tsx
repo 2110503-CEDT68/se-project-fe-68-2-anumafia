@@ -12,7 +12,6 @@ export default async function EditCompanyPage({ params }: { params: Promise<{ ci
   try {
     companyDetail = await getCompany(cid, session?.user?.token as string);
   } catch (error) {
-    console.error("Error fetching company details:", error);
     return <UnauthorizedPage />;
   }
 
